@@ -11,7 +11,9 @@ function smoothScrollWrapper(){
       }else if(element === 'bottom'){
             elementPosition = document.body.clientHeight  - window.innerHeight
       }else{
-            const elementInfo = document.querySelector(element).getBoundingClientRect()
+            const elementIn = document.querySelector(element);
+            if(!elementIn) return
+            const elementInfo = elementIn.getBoundingClientRect();
             if(position === 'top'){
                   elementPosition = window.scrollY + elementInfo.top
             }else if(position ==='bottom'){
@@ -31,9 +33,11 @@ function smoothScrollWrapper(){
                window.scrollTo(0,whereToScroll);
                return previusPosition = null
             }
+            if(window.scrollY+step > document.body.clientHeight  - window.innerHeight){
+               window.scrollTo(0,document.body.clientHeight  - window.innerHeight);
+               return previusPosition = null;
+            }
             window.scrollTo(0,window.scrollY+step);
-
-            if(previusPosition!=null &&  previusPosition >= window.scrollY ) return previusPosition = null;
             previusPosition = window.scrollY;
             scrollBottom()
          },speed)
@@ -44,14 +48,17 @@ function smoothScrollWrapper(){
                window.scrollTo(0,whereToScroll);
                return previusPosition = null
             }
+            if(window.scrollY-step < 0) {
+               window.scrollTo(0,0);
+               return previusPosition = null;
+            }
             window.scrollTo(0,window.scrollY-step);
-
-            if(previusPosition!=null && previusPosition <= window.scrollY) return previusPosition = null
             previusPosition = window.scrollY;
             scrollTop()
          },speed)
       }
       const whereToScroll = toScroll(element,position);
+      if(whereToScroll==='undefind')return;
 
       if(whereToScroll>window.scrollY)scrollBottom()
       if(whereToScroll<window.scrollY)scrollTop()
